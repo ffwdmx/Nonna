@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pedidos - La Nonna Mía</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f9e71e, #f4d03f);
+            color: #2c3e50;
+            padding: 20px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300"><defs><pattern id="grain" width="2" height="2" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.5" fill="rgba(0,0,0,0.05)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .logo-text {
+            font-family: 'Georgia', serif;
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-right: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            letter-spacing: -1px;
+        }
+        
+        .logo-subtitle {
+            font-size: 1.2em;
+            color: #34495e;
+            font-weight: 600;
+            margin-top: -10px;
+            letter-spacing: 2px;
+        }
+        
+        .nonna-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin-left: 15px;
+            border: 3px solid rgba(44,62,80,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            color: #34495e;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .productos-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .productos-section h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            text-align: center;
+        }
+        
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .producto-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .producto-item label {
+            font-weight: 500;
+            color: #333;
+            margin: 0;
+            flex: 1;
+        }
+        
+        .producto-codigo {
+            font-family: monospace;
+            font-size: 0.8em;
+            color: #666;
+            display: block;
+            margin-top: 2px;
+        }
+        
+        .producto-item select {
+            width: 100px;
+            margin: 0;
+            text-align: center;
+            background: white;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        
+        .producto-item select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .producto-item select:hover {
+            border-color: #667eea;
+        }
+        
+        .total-counter {
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2em;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .logo-text {
+                font-size: 2.2em;
+                margin-right: 10px;
+            }
+            
+            .logo-subtitle {
+                font-size: 1em;
+            }
+            
+            .nonna-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2em;
+                margin-left: 10px;
+            }
+            
+            .productos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nonna-icon {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div>
+                        <div class="logo-text">LA NONNA MIA</div>
+                        <div class="logo-subtitle">-PASTES-</div>
+                    </div>
+                    <div class="nonna-icon">👵🏻</div>
+                </div>
+                <p>Sistema de Pedidos para Sucursales - MSSQL</p>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <form id="pedidoForm">
+                
+                <!-- 1. INFORMACIÓN BÁSICA -->
+                <div class="form-group">
+                    <label for="sucursal">Sucursal *</label>
+                    <select id="sucursal" name="sucursal" required>
+                        <option value="">Selecciona tu sucursal</option>
+                        <option value="conchitas">Conchitas (Almacén 11)</option>
+                        <option value="clouthier">Clouthier (Almacén 12)</option>
+                        <option value="zapopan">Zapopan (Almacén 13)</option>
+                        <option value="transito">Tránsito (Almacén 14)</option>
+                        <option value="morelos">Morelos (Almacén 15)</option>
+                        <option value="expiatorio">Expiatorio (Almacén 16)</option>
+                        <option value="senderos">Senderos (Almacén 17)</option>
+                        <option value="cucea">CUCEA (Almacén 18)</option>
+                        <option value="abastos">Abastos (Almacén 19)</option>
+                        <option value="guadalupe">Guadalupe (Almacén 21)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pin_sucursal">PIN de Sucursal *</label>
+                    <input type="password" id="pin_sucursal" name="pin_sucursal" maxlength="6" placeholder="Ingresa el PIN de tu sucursal" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tipo_pedido">Tipo de Pedido *</label>
+                    <select id="tipo_pedido" name="tipo_pedido" required>
+                        <option value="">Selecciona el tipo de pedido</option>
+                        <option value="normal">Normal</option>
+                        <option value="reemplazo">Reemplazo</option>
+                        <option value="adicional">Adicional</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="solicitante">Nombre del Solicitante *</label>
+                    <input type="text" id="solicitante" name="solicitante" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha_entrega">Fecha de Entrega *</label>
+                    <input type="date" id="fecha_entrega" name="fecha_entrega" required>
+                </div>
+
+                <!-- 2. PASTES SALADOS -->
+                <div class="productos-section">
+                    <h3>🥟 Pastes Salados</h3>
+                    <div class="productos-grid">
+                        <div class="producto-item">
+                            <label>
+                                Italiana
+                                <span class="producto-codigo">Código: 00122</span>
+                            </label>
+                            <select name="italiana">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Rajas con Queso
+                                <span class="producto-codigo">Código: 00123</span>
+                            </label>
+                            <select name="rajas_con_queso">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Atún
+                                <span class="producto-codigo">Código: 00124</span>
+                            </label>
+                            <select name="atun">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Mole
+                                <span class="producto-codigo">Código: 00125</span>
+                            </label>
+                            <select name="mole">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Boloñesa
+                                <span class="producto-codigo">Código: 00126</span>
+                            </label>
+                            <select name="bolognesa">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Carne con Papas
+                                <span class="producto-codigo">Código: 00127</span>
+                            </label>
+                            <select name="carne_con_papas">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Champiñón con Queso
+                                <span class="producto-codigo">Código: 00128</span>
+                            </label>
+                            <select name="champinon_con_queso">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Hawaiana
+                                <span class="producto-codigo">Código: 00129</span>
+                            </label>
+                            <select name="hawaiana">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Jamón con Queso
+                                <span class="producto-codigo">Código: 00130</span>
+                            </label>
+                            <select name="jamon_con_queso">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Choriqueso
+                                <span class="producto-codigo">Código: 00131</span>
+                            </label>
+                            <select name="choriqueso">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Tocino
+                                <span class="producto-codigo">Código: 00133</span>
+                            </label>
+                            <select name="tocino">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Pastor con Queso
+                                <span class="producto-codigo">Código: 00134</span>
+                            </label>
+                            <select name="pastor_con_queso">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Cheeseburger
+                                <span class="producto-codigo">Código: 00132</span>
+                            </label>
+                            <select name="cheeseburger">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Espinacas con Queso
+                                <span class="producto-codigo">Código: 00135</span>
+                            </label>
+                            <select name="espinacas_con_queso">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Marlín
+                                <span class="producto-codigo">Código: 00136</span>
+                            </label>
+                            <select name="marlin">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. PASTES DULCES -->
+                <div class="productos-section">
+                    <h3>🍰 Pastes Dulces</h3>
+                    <div class="productos-grid">
+                        <div class="producto-item">
+                            <label>
+                                Piña
+                                <span class="producto-codigo">Código: 00114</span>
+                            </label>
+                            <select name="pina">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Manzana
+                                <span class="producto-codigo">Código: 00115</span>
+                            </label>
+                            <select name="manzana">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Fresa Filadelfia
+                                <span class="producto-codigo">Código: 00116</span>
+                            </label>
+                            <select name="fresa_filadelfia">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Crema
+                                <span class="producto-codigo">Código: 00117</span>
+                            </label>
+                            <select name="crema">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Cajeta
+                                <span class="producto-codigo">Código: 00118</span>
+                            </label>
+                            <select name="cajeta">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Avellana
+                                <span class="producto-codigo">Código: 00119</span>
+                            </label>
+                            <select name="avellana">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Zarzamora
+                                <span class="producto-codigo">Código: 00120</span>
+                            </label>
+                            <select name="zarzamora">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                        <div class="producto-item">
+                            <label>
+                                Guayaba
+                                <span class="producto-codigo">Código: 00121</span>
+                            </label>
+                            <select name="guayaba">
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="18">18</option>
+                                <option value="24">24</option>
+                                <option value="30">30</option>
+                                <option value="36">36</option>
+                                <option value="42">42</option>
+                                <option value="48">48</option>
+                                <option value="54">54</option>
+                                <option value="60">60</option>
+                                <option value="66">66</option>
+                                <option value="72">72</option>
+                                <option value="78">78</option>
+                                <option value="84">84</option>
+                                <option value="90">90</option>
+                                <option value="96">96</option>
+                                <option value="102">102</option>
+                                <option value="108">108</option>
+                                <option value="114">114</option>
+                                <option value="120">120</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. TOTAL DE PASTES -->
+                <div class="total-counter" id="totalCounter">
+                    Total de pastes: <span id="totalPiezas">0</span>
+                </div>
+
+                <!-- 5. OBSERVACIONES ESPECIALES -->
+                <div class="form-group">
+                    <label for="observaciones">Observaciones Especiales</label>
+                    <textarea id="observaciones" name="observaciones" rows="4" placeholder="Escribe aquí cualquier observación especial para tu pedido..."></textarea>
+                </div>
+
+                <!-- 6. BOTÓN ENVIAR PEDIDO -->
+                <div class="submit-container">
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        Enviar Pedido
+                    </button>
+                </div>
+
+                <div class="loading" id="loading">
+                    <p>Procesando pedido en MSSQL... Por favor espera.</p>
+                </div>
+
+                <div class="message" id="message"></div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Configurar fecha mínima (hoy)
+        const fechaInput = document.getElementById('fecha_entrega');
+        const hoy = new Date().toISOString().split('T')[0];
+        fechaInput.min = hoy;
+        fechaInput.value = hoy;
+        
+        // Contador de total de pastes
+        const productSelects = document.querySelectorAll('.producto-item select');
+        const totalPiezasSpan = document.getElementById('totalPiezas');
+        
+        function actualizarTotal() {
+            let total = 0;
+            productSelects.forEach(select => {
+                total += parseInt(select.value) || 0;
+            });
+            totalPiezasSpan.textContent = total;
+        }
+        
+        // Escuchar cambios en los dropdowns
+        productSelects.forEach(select => {
+            select.addEventListener('change', actualizarTotal);
+        });
+        
+        // PINs de las sucursales (en producción estos deberían estar en el backend)
+        const pinesSucursales = {
+            'conchitas': '1234',
+            'clouthier': '2345',
+            'zapopan': '3456',
+            'transito': '4567',
+            'morelos': '5678',
+            'expiatorio': '6789',
+            'senderos': '7890',
+            'cucea': '8901',
+            'abastos': '9012',
+            'guadalupe': '0123'
+        };
+        
+        function validarPIN() {
+            const sucursal = document.getElementById('sucursal').value;
+            const pin = document.getElementById('pin_sucursal').value;
+            
+            if (sucursal && pin) {
+                if (pinesSucursales[sucursal] !== pin) {
+                    document.getElementById('pin_sucursal').setCustomValidity('PIN incorrecto para esta sucursal');
+                    return false;
+                } else {
+                    document.getElementById('pin_sucursal').setCustomValidity('');
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        document.getElementById('sucursal').addEventListener('change', validarPIN);
+        document.getElementById('pin_sucursal').addEventListener('input', validarPIN);
+        
+        // Manejar envío del formulario
+        const form = document.getElementById('pedidoForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const message = document.getElementById('message');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Validar que se haya seleccionado al menos un paste
+            let tieneProductos = false;
+            productSelects.forEach(select => {
+                if (parseInt(select.value) > 0) {
+                    tieneProductos = true;
+                }
+            });
+            
+            if (!tieneProductos) {
+                mostrarMensaje('Debes seleccionar al menos un paste para hacer el pedido', 'error');
+                return;
+            }
+            
+            // Validar PIN
+            if (!validarPIN()) {
+                mostrarMensaje('PIN incorrecto para la sucursal seleccionada', 'error');
+                return;
+            }
+            
+            // Preparar datos del formulario
+            const formData = new FormData(form);
+            const pedidoData = Object.fromEntries(formData);
+            
+            // Mostrar loading
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            message.style.display = 'none';
+            
+            try {
+                // URL del webhook de n8n (cambiar por la URL real)
+                const response = await fetch('TU_URL_WEBHOOK_N8N', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(pedidoData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.status === 'success') {
+                    mostrarMensaje(`Pedido enviado exitosamente. Número: ${result.numero_pedido}`, 'success');
+                    form.reset();
+                    fechaInput.value = hoy;
+                    actualizarTotal();
+                } else {
+                    mostrarMensaje(result.message || 'Error al enviar el pedido', 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('Error de conexión. Por favor intenta nuevamente.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+        
+        function mostrarMensaje(texto, tipo) {
+            message.textContent = texto;
+            message.className = `message ${tipo}`;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
